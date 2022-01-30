@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1" >
+<!-- Static content -->
+<link rel="stylesheet" th:href="@{/css/card.css}">
+
+
+<title>Fancy Card Templates</title>
+</head>
+<body>
+  <!-- Sidebar -->
+<div class="w3-sidebar w3-light-grey w3-bar-block" style="width:15%;">
+  <h3 class="w3-bar-item">Find me on</h3>
+  <a href="#" class="w3-bar-item w3-button">LinkedIn</a>
+  <a href="#" class="w3-bar-item w3-button">Behance</a>
+  <a href="#" class="w3-bar-item w3-button">Github</a>
+  <div class="sidecard">
+    <img class="profile" src="https://media-exp1.licdn.com/dms/image/C5603AQEEhwgoUGzecg/profile-displayphoto-shrink_200_200/0/1641790384790?e=1648684800&v=beta&t=Ms--Lk6J_ODa4reI8gDDTMbEXR3eH2tncsrCutNSFCc" alt="Avatar" style="width:100%">
+    <div class="contains">
+      <h4><b>Taylor chemtai</b></h4> 
+      <p>Developer</p> 
+    </div>
+  </div>
+</div>
+<!-- Page Content -->
+<div style="margin-left:8%">
+  <h1 class="heading">Fancy Card Templates</h1>
+  <hr>
+  <div class="form">
+    <form action="welcome" method="post" onsubmit="return validate()">
+      <table class="tab">
+        <tr>
+          <td class="header">Gimme a gig !</td>
+        </tr>
+      </table>
+    </form>
+</div>
+<div id="app" class="container">
+  <card data-image="https://media.istockphoto.com/photos/closeup-of-unrecognizable-designer-sitting-at-desk-with-papers-and-picture-id1192947841?b=1&k=20&m=1192947841&s=170667a&w=0&h=0ZGbZQRv4xmh5goNIyzWtIoeQGxOHAxLc-8r76WRPFE=">
+    <h1 slot="header">UI Designer</h1>
+    <p slot="content">Creativity at its best</p>
+  </card>
+  <card data-image="https://images.unsplash.com/photo-1587620962725-abab7fe55159?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1031&q=80">
+    <h1 slot="header">Developer</h1>
+    <p slot="content">I like thinking it out</p>
+  </card>
+  <card data-image="https://images.unsplash.com/photo-1626785774573-4b799315345d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=871&q=80">
+    <h1 slot="header">Graphic Designer</h1>
+    <p slot="content">Art is life</p>
+  </card>
+  <card data-image="https://images.credly.com/size/340x340/images/53f37f83-04a1-4935-9b1e-21a99cc6e1b2/CyberOpsAssoc.png">
+    <h1 slot="header">Cyber security analyst</h1>
+    <p slot="content">Your network maybe in danger</p>
+  </card>
+</div>
+<script 
+  src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js">
+</script>
+<script 
+  src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.21.1/babel.min.js">
+</script>
+<script type="text/babel">
+  Vue.config.devtools = true;
+
+  Vue.component('card', {
+    template: `
+      <div class="card-wrap"
+        @mousemove="handleMouseMove"
+        @mouseenter="handleMouseEnter"
+        @mouseleave="handleMouseLeave"
+        ref="card">
+        <div class="card"
+          :style="cardStyle">
+          <div class="card-bg" :style="[cardBgTransform, cardBgImage]"></div>
+          <div class="card-info">
+            <slot name="header"></slot>
+            <slot name="content"></slot>
+          </div>
+        </div>
+      </div>`,
+    mounted() {
+      this.width = this.$refs.card.offsetWidth;
+      this.height = this.$refs.card.offsetHeight;
+    },
+    props: ['dataImage'],
+    data: () => ({
+      width: 0,
+      height: 0,
+      mouseX: 0,
+      mouseY: 0,
+      mouseLeaveDelay: null
+    }),
+    computed: {
+      mousePX() {
+        return this.mouseX / this.width;
+      },
+      mousePY() {
+        return this.mouseY / this.height;
+      },
+      cardStyle() {
+        const rX = this.mousePX * 30;
+        const rY = this.mousePY * -30;
+        return {
+          transform: `rotateY(${rX}deg) rotateX(${rY}deg)`
+        };
+      },
+      cardBgTransform() {
+        const tX = this.mousePX * -40;
+        const tY = this.mousePY * -40;
+        return {
+          transform: `translateX(${tX}px) translateY(${tY}px)`
+        }
+      },
+      cardBgImage() {
+        return {
+          backgroundImage: `url(${this.dataImage})`
+        }
+      }
+    },
+    methods: {
+      handleMouseMove(e) {
+        this.mouseX = e.pageX - this.$refs.card.offsetLeft - this.width/2;
+        this.mouseY = e.pageY - this.$refs.card.offsetTop - this.height/2;
+      },
+      handleMouseEnter() {
+        clearTimeout(this.mouseLeaveDelay);
+      },
+      handleMouseLeave() {
+        this.mouseLeaveDelay = setTimeout(()=>{
+          this.mouseX = 0;
+          this.mouseY = 0;
+        }, 1000);
+      }
+    }
+  });
+
+  const app = new Vue({
+    el: '#app'
+  });
+</script>
+</div>
+</body>
+</html>
